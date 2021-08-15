@@ -9,7 +9,7 @@
 #define SIGNAL_HIGH_US 1700
 #define SIGNAL_ADJUST_US 50
 
-const int header_sequence_us[] = {
+constexpr int header_sequence_us[] = {
   9100, 4500,
   SIGNAL_LOW_US, SIGNAL_LOW_US, SIGNAL_LOW_US, SIGNAL_LOW_US, SIGNAL_LOW_US, SIGNAL_LOW_US, SIGNAL_LOW_US,
   SIGNAL_HIGH_US,
@@ -88,7 +88,9 @@ void setup() {
 
   Serial.begin(115200);
   delay(500);
+
+  // TODO: Initialize WiFi
+  // TODO: Initialize HTTP server
 }
 
-void loop() {
-}
+void loop() {}
