@@ -90,6 +90,7 @@ bool configureWifi() {
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
   pinMode(IR_OUTPUT_PIN, OUTPUT);
   digitalWrite(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
   analogWriteFreq(IR_FREQ);
