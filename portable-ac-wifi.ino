@@ -14,10 +14,6 @@ void setup() {
   Serial.begin(115200);
   delay(500);
 
-  ac.powerOn();
-  ac.setMode(ACSettingsEncoder::kFanOnly);
-  ac.send();
-
   // TODO: Initialize WiFi
   // TODO: Initialize HTTP server
 }
