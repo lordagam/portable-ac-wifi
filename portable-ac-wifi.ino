@@ -4,7 +4,7 @@
 #define IR_OUTPUT_INACTIVE LOW
 #define IR_FREQ 38000
 
-ACSettingsEncoder ac_settings(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
+ACSettingsEncoder ac(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
 
 void setup() {
   pinMode(IR_OUTPUT_PIN, OUTPUT);
@@ -13,6 +13,10 @@ void setup() {
 
   Serial.begin(115200);
   delay(500);
+
+  ac.powerOn();
+  ac.setMode(ACSettingsEncoder::kFanOnly);
+  ac.send();
 
   // TODO: Initialize WiFi
   // TODO: Initialize HTTP server

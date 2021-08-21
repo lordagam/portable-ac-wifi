@@ -1,6 +1,8 @@
 #ifndef __AC_SETTINGS_ENCODER_H
 #define __AC_SETTINGS_ENCODER_H
 
+#include <stdint.h>
+
 class ACSettingsEncoder {
  public:
   enum FanSpeed {
@@ -14,9 +16,7 @@ class ACSettingsEncoder {
     kFanOnly,
   };
 
-  ACSettingsEncoder(uint8_t ir_output_pin, uint8_t ir_output_inactive) :
-      ir_output_pin(ir_output_pin),
-      ir_output_inactive(ir_output_inactive) {}
+  ACSettingsEncoder(uint8_t ir_output_pin, uint8_t ir_output_inactive);
 
   FanSpeed getFanSpeed();
   void setFanSpeed(FanSpeed speed);
@@ -24,17 +24,19 @@ class ACSettingsEncoder {
   Mode getMode();
   void setMode(Mode mode);
 
-  bool getPowerEnabled() { return power_on; }
-  void setPowerEnabled(bool enabled) { power_on = enabled; }
+  bool isPowerOn() { return power_on; }
+  void powerOn() { power_on = true; }
+  void powerOff() { power_on = false; }
 
-  bool getTimerEnabled() { return timer_on; }
-  void setTimerEnabled(bool enabled) { timer_on = enabled; }
+  bool isTimerOn() { return timer_on; }
+  void timerOn() { timer_on = true; }
+  void timerOff() { timer_on = false; }
 
   uint8_t getThermostatInF() { return thermostat; }
   void setThermostatInF(uint8_t degrees_f) { thermostat = degrees_f; }
 
   // Transmit current settings via infrared signal.
-  void sendSettings();
+  void send();
 
  private:
   // Arduino PWM output pin for generating infrared signal.

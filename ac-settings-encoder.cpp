@@ -1,25 +1,24 @@
 #include "ac-settings-encoder.h"
 
+#include <Arduino.h>
+
 namespace {
 
-using ::ACSettingsEncoder::FanSpeed;
-using ::ACSettingsEncoder::Mode;
+constexpr int kPWMUniform = 128;
+constexpr int kPWMOff = 0;
 
-constexpr kPWMUniform = 128;
-constexpr kPWMOff = 0;
+constexpr int kSignalLow_us = 585;
+constexpr int kSignalHigh_us = 1700;
+constexpr int kSignalAdjust_us = 50;
 
-constexpr kSignalLow_us = 585;
-constexpr kSignalHigh_us = 1700;
-constexpr kSignalAdjust_us = 50;
-
-constexpr kFanLow = bit(0);
-constexpr kFanMedium = bit(1);
-constexpr kFanHigh = bit(2);
-constexpr kFanMask = kFanLow | kFanMedium | kFanHigh;
-constexpr kModeCool = bit(3);
-constexpr kModeDehum = bit(5);
-constexpr kModeFanOnly = bit(6);
-constexpr kModeMask = kModeCool | kModeDehum | kModeFanOnly;
+constexpr uint8_t kFanLow = bit(0);
+constexpr uint8_t kFanMedium = bit(1);
+constexpr uint8_t kFanHigh = bit(2);
+constexpr uint8_t kFanMask = kFanLow | kFanMedium | kFanHigh;
+constexpr uint8_t kModeCool = bit(3);
+constexpr uint8_t kModeDehum = bit(5);
+constexpr uint8_t kModeFanOnly = bit(6);
+constexpr uint8_t kModeMask = kModeCool | kModeDehum | kModeFanOnly;
 
 constexpr int kHeaderSequence_us[] = {
   9100, 4500,
@@ -32,11 +31,13 @@ constexpr int kHeaderSequence_us[] = {
 
 } // namespace
 
-ACSettingsEncoder::ACSettingsEncoder(uint8_t ir_output_pin) : ir_output_pin(ir_output_pin) {
+ACSettingsEncoder::ACSettingsEncoder(uint8_t ir_output_pin, uint8_t ir_output_inactive) :
+      ir_output_pin(ir_output_pin),
+      ir_output_inactive(ir_output_inactive) {
   fan_mode_flags = kFanHigh | kModeCool;
 }
 
-FanSpeed ACSettingsEncoder::getFanSpeed() {
+ACSettingsEncoder::FanSpeed ACSettingsEncoder::getFanSpeed() {
   switch (fan_mode_flags & kFanMask) {
     case kFanLow:
       return FanSpeed::kLow;
@@ -46,7 +47,7 @@ FanSpeed ACSettingsEncoder::getFanSpeed() {
       return FanSpeed::kHigh;
   }
 }
-void ACSettingsEncoder::setFanSpeed(FanSpeed speed) {
+void ACSettingsEncoder::setFanSpeed(ACSettingsEncoder::FanSpeed speed) {
   fan_mode_flags = fan_mode_flags & ~kFanMask;
   switch (speed) {
     case kLow:
@@ -61,7 +62,7 @@ void ACSettingsEncoder::setFanSpeed(FanSpeed speed) {
   }
 }
 
-Mode ACSettingsEncoder::getMode() {
+ACSettingsEncoder::Mode ACSettingsEncoder::getMode() {
   switch (fan_mode_flags & kModeMask) {
     case kModeDehum:
       return Mode::kDehum;
@@ -71,7 +72,7 @@ Mode ACSettingsEncoder::getMode() {
       return Mode::kCool;
   }
 }
-void ACSettingsEncoder::setMode(Mode mode) {
+void ACSettingsEncoder::setMode(ACSettingsEncoder::Mode mode) {
   fan_mode_flags = fan_mode_flags & ~kModeMask;
   switch (mode) {
     case kDehum:
@@ -86,9 +87,9 @@ void ACSettingsEncoder::setMode(Mode mode) {
   }
 }
 
-void ACSettingsEncoder::sendSettings() {
+void ACSettingsEncoder::send() {
   bool signal_active = true;
-  for (int i = 0; i < sizeof(header_sequence_us) / sizeof(int); i++) {
+  for (int i = 0; i < sizeof(kHeaderSequence_us) / sizeof(int); i++) {
     if (signal_active) {
       analogWrite(ir_output_pin, kPWMUniform);
     } else {
@@ -96,7 +97,7 @@ void ACSettingsEncoder::sendSettings() {
       digitalWrite(ir_output_pin, ir_output_inactive);
     }
     signal_active = !signal_active;
-    delayMicroseconds(header_sequence_us[i] - kSignalAdjust_us);
+    delayMicroseconds(kHeaderSequence_us[i] - kSignalAdjust_us);
   }
   sendByte(fan_mode_flags);
   if (power_on) {
