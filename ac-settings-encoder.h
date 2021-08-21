@@ -14,7 +14,9 @@ class ACSettingsEncoder {
     kFanOnly,
   };
 
-  ACSettingsEncoder(uint8_t ir_output_pin) : ir_output_pin(ir_output_pin) {}
+  ACSettingsEncoder(uint8_t ir_output_pin, uint8_t ir_output_inactive) :
+      ir_output_pin(ir_output_pin),
+      ir_output_inactive(ir_output_inactive) {}
 
   FanSpeed getFanSpeed();
   void setFanSpeed(FanSpeed speed);
@@ -37,6 +39,8 @@ class ACSettingsEncoder {
  private:
   // Arduino PWM output pin for generating infrared signal.
   uint8_t ir_output_pin;
+  // Inactive state for the infrared output pin.
+  uint8_t ir_output_inactive;
   // Fan and cooling mode.
   uint8_t fan_mode_flags;
   // Enables unit main power.

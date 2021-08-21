@@ -5,8 +5,6 @@ namespace {
 using ::ACSettingsEncoder::FanSpeed;
 using ::ACSettingsEncoder::Mode;
 
-constexpr kIRPinInactive = LOW;
-
 constexpr kPWMUniform = 128;
 constexpr kPWMOff = 0;
 
@@ -95,7 +93,7 @@ void ACSettingsEncoder::sendSettings() {
       analogWrite(ir_output_pin, kPWMUniform);
     } else {
       analogWrite(ir_output_pin, kPWMOff);
-      digitalWrite(ir_output_pin, kIRPinInactive);
+      digitalWrite(ir_output_pin, ir_output_inactive);
     }
     signal_active = !signal_active;
     delayMicroseconds(header_sequence_us[i] - kSignalAdjust_us);
@@ -118,12 +116,12 @@ void ACSettingsEncoder::sendSettings() {
   sendBit(power_on);
   sendByte(thermostat);
   analogWrite(ir_output_pin, kPWMOff);
-  digitalWrite(ir_output_pin, kIRPinInactive);
+  digitalWrite(ir_output_pin, ir_output_inactive);
 }
 
 void ACSettingsEncoder::sendBit(bool b) {
   analogWrite(ir_output_pin, kPWMOff);
-  digitalWrite(ir_output_pin, kIRPinInactive);
+  digitalWrite(ir_output_pin, ir_output_inactive);
   if (b) {
     delayMicroseconds(kSignalHigh_us - kSignalAdjust_us);
   } else {
