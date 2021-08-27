@@ -22,11 +22,11 @@ constexpr int kThermostatMaxF = 100;
 
 const char* modeToString(ACSettingsEncoder::Mode mode) {
   switch (mode) {
-    case kCool:
+    case ACSettingsEncoder::kCool:
       return kCoolString;
-    case kDehum:
+    case ACSettingsEncoder::kDehum:
       return kDehumString;
-    case kFanOnly:
+    case ACSettingsEncoder::kFanOnly:
       return kFanOnlyString;
   }
   return "";
@@ -44,11 +44,11 @@ ACSettingsEncoder::Mode stringToMode(const char* mode) {
 
 const char* fanSpeedToString(ACSettingsEncoder::FanSpeed fan) {
   switch (fan) {
-    case kLow:
+    case ACSettingsEncoder::kLow:
       return kLowString;
-    case kMedium:
+    case ACSettingsEncoder::kMedium:
       return kMediumString;
-    case kHigh:
+    case ACSettingsEncoder::kHigh:
       return kHighString;
   }
   return "";
@@ -102,8 +102,8 @@ void handleSettings(ESP8266WebServer& server, ACSettingsEncoder& ac) {
   json += tmp;
   snprintf(tmp, sizeof(tmp), "power:%s,", ac.isPowerOn() ? kTrueString : kFalseString);
   json += tmp;
-  snprintf(tmp, sizeof(tmp), "thermostatInF:%d,", ac.getTheromostatInF());
+  snprintf(tmp, sizeof(tmp), "thermostatInF:%d,", ac.getThermostatInF());
   json += tmp;
   json += "}";
-  server.send(200, kJsonContentType, json);
+  server.send(200, kJsonContentType, json.c_str());
 }

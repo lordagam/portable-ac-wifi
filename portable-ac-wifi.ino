@@ -20,7 +20,7 @@ void initWebServer() {
   server.on("/settings", handleSettingsCallback);
   server.on("/", []() {
     server.send(200, kIndexContentType, kIndexHtml);
-  }]);
+  });
   server.begin();
 }
 
