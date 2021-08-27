@@ -18,28 +18,28 @@ bool connectToWifi() {
   memcpy(ssid, &EEPROM[0], kSSIDMax);
   memcpy(psk, &EEPROM[kSSIDMax], kPSKMax);
   if (!ssid[0]) {
-    Serial.println("No WiFi configuration found.");
+    Serial.println(F("No WiFi configuration found."));
     return false;
   }
 
-  Serial.print("Connecting to SSID: ");
+  Serial.print(F("Connecting to SSID: "));
   Serial.println(ssid);
   WiFi.begin(ssid, psk);
   unsigned long connect_start_ms = millis();
   while (WiFi.status() != WL_CONNECTED) {
     if (millis() - connect_start_ms > kConnectTimeoutMs) {
-      Serial.println("Connection failed!");
+      Serial.println(F("Connection failed!"));
       return false;
     }
     delay(500);
   }
 
-  Serial.println("WiFi connected.");
-  Serial.print("IP address: ");
+  Serial.println(F("WiFi connected."));
+  Serial.print(F("IP address: "));
   Serial.println(WiFi.localIP());
-  Serial.print("Netmask: ");
+  Serial.print(F("Netmask: "));
   Serial.println(WiFi.subnetMask());
-  Serial.print("Gateway: ");
+  Serial.print(F("Gateway: "));
   Serial.println(WiFi.gatewayIP());
   return true;
 }
@@ -52,7 +52,7 @@ bool configureWifi() {
   char ssid[kSSIDMax] = {0};
   char psk[kPSKMax] = {0};
 
-  Serial.print("Enter WiFi SSID: ");
+  Serial.print(F("Enter WiFi SSID: "));
   Serial.setTimeout(10000);
   String ssid_s = Serial.readString();
   Serial.print(ssid_s);
@@ -60,13 +60,13 @@ bool configureWifi() {
     return false;
   }
   if (ssid_s.length() - 1 > kSSIDMax) {
-    Serial.println("SSID is too long!");
+    Serial.println(F("SSID is too long!"));
     return false;
   }
   // Truncate trailing newline character.
   memcpy(ssid, ssid_s.c_str(), ssid_s.length() - 1);
   
-  Serial.print("Enter WiFi PSK: ");
+  Serial.print(F("Enter WiFi PSK: "));
   Serial.setTimeout(30000);
   String psk_s = Serial.readString();
   Serial.print(psk_s);
@@ -74,7 +74,7 @@ bool configureWifi() {
     return false;
   }
   if (psk_s.length() - 1 > kPSKMax) {
-    Serial.println("PSK is too long!");
+    Serial.println(F("PSK is too long!"));
     return false;
   }
   // Truncate trailing newline character.
@@ -91,7 +91,7 @@ void initEEPROMWiFi() {
   EEPROM.begin(kConfigSize);
   while (!connectToWifi()) {
     if (!configureWifi()) {
-      Serial.println("WiFi configuration failed!");
+      Serial.println(F("WiFi configuration failed!"));
       delay(1000);
     }
   }
