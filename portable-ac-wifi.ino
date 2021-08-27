@@ -1,3 +1,5 @@
+#include <ESP8266WebServer.h>
+
 #include "ac-settings-encoder.h"
 #include "eeprom-wifi.h"
 
@@ -6,6 +8,14 @@
 #define IR_FREQ 38000
 
 ACSettingsEncoder ac(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
+ESP8266WebServer server(80);
+
+void initWebServer() {
+  server.on("/", []() {
+    server.send(200, "text/plain", "hello world");
+  });
+  server.begin();
+}
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -19,6 +29,9 @@ void setup() {
   delay(500);
 
   initEEPROMWiFi();
+  initWebServer();
 }
 
-void loop() {}
+void loop() {
+  server.handleClient();
+}
