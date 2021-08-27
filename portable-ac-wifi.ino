@@ -2,6 +2,8 @@
 
 #include "ac-settings-encoder.h"
 #include "eeprom-wifi.h"
+#include "index.html.h"
+#include "settings-handler.h"
 
 #define IR_OUTPUT_PIN 14
 #define IR_OUTPUT_INACTIVE LOW
@@ -10,10 +12,15 @@
 ACSettingsEncoder ac(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
 ESP8266WebServer server(80);
 
+void handleSettingsCallback() {
+  handleSettings(server, ac);
+}
+
 void initWebServer() {
+  server.on("/settings", handleSettingsCallback);
   server.on("/", []() {
-    server.send(200, "text/plain", "hello world");
-  });
+    server.send(200, kIndexContentType, kIndexHtml);
+  }]);
   server.begin();
 }
 

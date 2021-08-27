@@ -85,7 +85,7 @@ bool configureWifi() {
   return EEPROM.commit();
 }
 
-}
+} // namespace
 
 void initEEPROMWiFi() {
   EEPROM.begin(kConfigSize);
