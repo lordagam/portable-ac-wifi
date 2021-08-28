@@ -65,19 +65,19 @@ constexpr PROGMEM char kIndexHtml[] = R"html(
   <h1>Portable A/C Thermostat</h1>
   <p><label>Ambient Temperature:</label> <span id="ambient">Loading..</span>&deg;F</p>
   <p><label>Thermostat Setting:</label> <input type="number" id="thermostat" min="50" max="100"/>&deg;F</p>
-  <p><label>Mode:</label>
+  <p><label>Mode:</label><br/>
     <input type="radio" name="mode" id="cool"/>
-    <label for="cool">Cool</label>
+    <label for="cool">Cool</label><br/>
     <input type="radio" name="mode" id="dehum"/>
-    <label for="dehum">Dehumidify</label>
+    <label for="dehum">Dehumidify</label><br/>
     <input type="radio" name="mode" id="fan_only"/>
     <label for="fan_only">Fan Only</label>
   </p>
-  <p><label>Fan Speed:</label>
+  <p><label>Fan Speed:</label><br/>
     <input type="radio" name="fan" id="low"/>
-    <label for="low">Low</label>
+    <label for="low">Low</label><br/>
     <input type="radio" name="fan" id="medium"/>
-    <label for="medium">Medium</label>
+    <label for="medium">Medium</label><br/>
     <input type="radio" name="fan" id="high"/>
     <label for="high">High</label>
   </p>
