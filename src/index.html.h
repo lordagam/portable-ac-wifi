@@ -8,9 +8,9 @@ constexpr PROGMEM char kIndexHtml[] = R"html(
   <script>
     function updateButtonLabel(btn) {
       if (btn.val() == 'true') {
-        btn.text('Disable');
+        btn.text('ON - Click to Disable');
       } else {
-        btn.text('Enable');
+        btn.text('OFF - Click to Enable');
       }
     }
     function loadSettings(settings) {
