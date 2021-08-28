@@ -42,17 +42,22 @@ void initWebServer() {
 }
 
 void setup() {
+  // The built-in LED is blinked to indicate WiFi configuration is needed.
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
 
+  // Make sure the infrared LED is off for now, but configure frequency
+  // that will be used for PWM later.
   pinMode(IR_OUTPUT_PIN, OUTPUT);
   digitalWrite(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
   analogWriteFreq(IR_FREQ);
 
+  // Serial is used for initial WiFi configuration.
   Serial.begin(SERIAL_BAUD);
   delay(500);
 
   if (!temp_sensor.begin(TEMP_SENSOR_I2C_ADDR)) {
+    // Ambient temperature is optional, log warning and carry on.
     Serial.println(F("Couldn't find MCP9808!"));
   }
   temp_sensor.setResolution(TEMP_SENSOR_RESOLUTION_MODE);
