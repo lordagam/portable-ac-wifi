@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr char kJsonContentType[] = "text/json";
+constexpr char kJsonContentType[] = "application/json";
 constexpr char kCoolString[] = "cool";
 constexpr char kDehumString[] = "dehum";
 constexpr char kFanOnlyString[] = "fan_only";
@@ -92,18 +92,19 @@ void handleSettings(ESP8266WebServer& server, ACSettingsEncoder& ac) {
     handleSettingsUpdate(server, ac);
     return;
   }
-  std::string json = "{";
-  char tmp[32];
-  snprintf(tmp, sizeof(tmp), "fan:\"%s\",", fanSpeedToString(ac.getFanSpeed()));
-  json += tmp;
-  snprintf(tmp, sizeof(tmp), "mode:\"%s\",", modeToString(ac.getMode()));
-  json += tmp;
-  snprintf(tmp, sizeof(tmp), "timer:%s,", ac.isTimerOn() ? kTrueString : kFalseString);
-  json += tmp;
-  snprintf(tmp, sizeof(tmp), "power:%s,", ac.isPowerOn() ? kTrueString : kFalseString);
-  json += tmp;
-  snprintf(tmp, sizeof(tmp), "thermostatInF:%d,", ac.getThermostatInF());
-  json += tmp;
-  json += "}";
-  server.send(200, kJsonContentType, json.c_str());
+  char json[128];
+  snprintf(json, sizeof(json),
+            "{"
+            R"("fan":"%s",)"
+            R"("mode":"%s",)"
+            R"("timer":%s,)"
+            R"("power":%s,)"
+            R"("thermostatInF":%d)"
+            "}",
+            fanSpeedToString(ac.getFanSpeed()),
+            modeToString(ac.getMode()),
+            ac.isTimerOn() ? kTrueString : kFalseString,
+            ac.isPowerOn() ? kTrueString : kFalseString,
+            ac.getThermostatInF());
+  server.send(200, kJsonContentType, json);
 }
