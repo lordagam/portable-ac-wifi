@@ -10,14 +10,15 @@
 #define TEMP_SENSOR_I2C_ADDR 0x18
 // The most precise resolution (0.0625 deg), but longest sample time (250ms).
 #define TEMP_SENSOR_RESOLUTION_MODE 3
-
 #define IR_OUTPUT_PIN 14
 #define IR_OUTPUT_INACTIVE LOW
 #define IR_FREQ 38000
+#define SERVER_HTTP_PORT 80
+#define SERIAL_BAUD 115200
 
 Adafruit_MCP9808 temp_sensor;
 ACSettingsEncoder ac(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
-ESP8266WebServer server(80);
+ESP8266WebServer server(SERVER_HTTP_PORT);
 
 float sampleTempF() {
   // Resume temperature sampling.
@@ -35,7 +36,7 @@ void handleSettingsCallback() {
 void initWebServer() {
   server.on("/settings", handleSettingsCallback);
   server.on("/", []() {
-    server.send(200, kIndexContentType, FPSTR(kIndexHtml));
+    server.send(kHTTPOK, kIndexContentType, kIndexHtml);
   });
   server.begin();
 }
@@ -48,7 +49,7 @@ void setup() {
   digitalWrite(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
   analogWriteFreq(IR_FREQ);
 
-  Serial.begin(115200);
+  Serial.begin(SERIAL_BAUD);
   delay(500);
 
   if (!temp_sensor.begin(TEMP_SENSOR_I2C_ADDR)) {
