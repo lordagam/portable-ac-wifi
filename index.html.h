@@ -13,6 +13,7 @@ constexpr PROGMEM char kIndexHtml[] = R"html(
       }
     }
     function loadSettings(settings) {
+      // TODO: Get ambient temperature measurement
       $('#ambient').text('N/A');
       $('#thermostat').val(settings.thermostatInF);
       $(`#${settings.mode}`).prop('checked', true);
@@ -27,8 +28,6 @@ constexpr PROGMEM char kIndexHtml[] = R"html(
       settings.fan = $('input[name="fan"]:checked').attr('id');
       settings.timer = $('#timer').val();
       settings.power = $('#power').val();
-      // FIXME
-      console.log(settings);
       $.post('/settings', settings, (data) => {
         loadSettings(data);
       });
@@ -36,8 +35,6 @@ constexpr PROGMEM char kIndexHtml[] = R"html(
 
     let inputTimer = undefined;
     function onInput() {
-      // FIXME
-      console.log('onInput');
       $('#ambient').text('Sending..');
       if (inputTimer != undefined) {
         clearTimeout(inputTimer);

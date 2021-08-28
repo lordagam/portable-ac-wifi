@@ -90,6 +90,7 @@ void handleSettings(ESP8266WebServer& server, ACSettingsEncoder& ac) {
   if (server.method() == HTTP_POST) {
     handleSettingsUpdate(server, ac);
   }
+  // TODO: Measure ambient temperature
   char json[128];
   snprintf(json, sizeof(json),
             "{"
