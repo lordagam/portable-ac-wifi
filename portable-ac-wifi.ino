@@ -36,7 +36,7 @@ void handleSettingsCallback() {
 void initWebServer() {
   server.on("/settings", handleSettingsCallback);
   server.on("/", []() {
-    server.send(kHTTPOK, kIndexContentType, kIndexHtml);
+    server.send(kHTTPOK, kIndexContentType, FPSTR(kIndexHtml));
   });
   server.begin();
 }
