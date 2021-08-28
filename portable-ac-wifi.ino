@@ -19,7 +19,7 @@ void handleSettingsCallback() {
 void initWebServer() {
   server.on("/settings", handleSettingsCallback);
   server.on("/", []() {
-    server.send(200, kIndexContentType, kIndexHtml);
+    server.send(200, kIndexContentType, FPSTR(kIndexHtml));
   });
   server.begin();
 }
