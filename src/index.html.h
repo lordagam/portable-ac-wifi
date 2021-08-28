@@ -13,8 +13,7 @@ constexpr PROGMEM char kIndexHtml[] = R"html(
       }
     }
     function loadSettings(settings) {
-      // TODO: Get ambient temperature measurement
-      $('#ambient').text('N/A');
+      $('#ambient').text(Number(settings.ambient).toFixed(1));
       $('#thermostat').val(settings.thermostatInF);
       $(`#${settings.mode}`).prop('checked', true);
       $(`#${settings.fan}`).prop('checked', true);
@@ -63,8 +62,8 @@ constexpr PROGMEM char kIndexHtml[] = R"html(
 </head>
 <body>
   <h1>Portable A/C Thermostat</h1>
-  <p><label>Ambient Temperature:</label> <span id="ambient">Loading..</span></p>
-  <p><label>Thermostat Setting:</label> <input type="number" id="thermostat" min="50" max="100"/></p>
+  <p><label>Ambient Temperature:</label> <span id="ambient">Loading..</span>&deg;F</p>
+  <p><label>Thermostat Setting:</label> <input type="number" id="thermostat" min="50" max="100"/>&deg;F</p>
   <p><label>Mode:</label>
     <input type="radio" name="mode" id="cool"/>
     <label for="cool">Cool</label>

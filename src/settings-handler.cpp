@@ -86,20 +86,22 @@ void handleSettingsUpdate(ESP8266WebServer& server, ACSettingsEncoder& ac) {
 
 } // namespace
 
-void handleSettings(ESP8266WebServer& server, ACSettingsEncoder& ac) {
+void handleSettings(
+  ESP8266WebServer& server, ACSettingsEncoder& ac, float ambient_temp_f) {
   if (server.method() == HTTP_POST) {
     handleSettingsUpdate(server, ac);
   }
-  // TODO: Measure ambient temperature
   char json[128];
   snprintf(json, sizeof(json),
             "{"
+            R"("ambient":"%f",)"
             R"("fan":"%s",)"
             R"("mode":"%s",)"
             R"("timer":%s,)"
             R"("power":%s,)"
             R"("thermostatInF":%d)"
             "}",
+            ambient_temp_f,
             fanSpeedToString(ac.getFanSpeed()),
             modeToString(ac.getMode()),
             ac.isTimerOn() ? kTrueString : kFalseString,
