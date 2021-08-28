@@ -46,7 +46,7 @@ class ACSettingsEncoder {
   // Fan and cooling mode.
   uint8_t fan_mode_flags;
   // Enables unit main power.
-  bool power_on = true;
+  bool power_on = false;
   // When true, the unit will shut off after 8 hours of operation.
   bool timer_on = false;
   // Target temperature in degrees Fahrenheit.

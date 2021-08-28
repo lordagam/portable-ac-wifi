@@ -35,6 +35,8 @@ void setup() {
   Serial.begin(115200);
   delay(500);
 
+  // Get the A/C state in sync with internal state.
+  ac.send();
   initEEPROMWiFi();
   initWebServer();
 }
