@@ -1,9 +1,9 @@
 #include <ESP8266WebServer.h>
 
-#include "ac-settings-encoder.h"
-#include "eeprom-wifi.h"
-#include "index.html.h"
-#include "settings-handler.h"
+#include "src/ac-settings-encoder.h"
+#include "src/eeprom-wifi.h"
+#include "src/index.html.h"
+#include "src/settings-handler.h"
 
 #define IR_OUTPUT_PIN 14
 #define IR_OUTPUT_INACTIVE LOW
