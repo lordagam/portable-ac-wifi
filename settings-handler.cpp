@@ -82,7 +82,6 @@ void handleSettingsUpdate(ESP8266WebServer& server, ACSettingsEncoder& ac) {
   thermostatInF = max(thermostatInF, kThermostatMinF);
   ac.setThermostatInF(thermostatInF);
   ac.send();
-  server.send(200);
 }
 
 } // namespace
@@ -90,7 +89,6 @@ void handleSettingsUpdate(ESP8266WebServer& server, ACSettingsEncoder& ac) {
 void handleSettings(ESP8266WebServer& server, ACSettingsEncoder& ac) {
   if (server.method() == HTTP_POST) {
     handleSettingsUpdate(server, ac);
-    return;
   }
   char json[128];
   snprintf(json, sizeof(json),
