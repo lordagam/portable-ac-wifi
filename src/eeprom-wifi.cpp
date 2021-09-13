@@ -6,18 +6,16 @@
 
 namespace {
 
-constexpr int kSSIDMax = 32;
-constexpr int kPSKMax = 64;
-constexpr int kConfigSize = (kSSIDMax + kPSKMax);
-
 constexpr unsigned long kConnectTimeoutMs = 30000;
 
-bool connectToWifi(
+} // namespace
+
+bool connectToWiFi(
     EEPROMClass& EEPROM, ESP8266WiFiClass& WiFi, HardwareSerial& Serial) {
-  char ssid[kSSIDMax + 1] = {0};
-  char psk[kPSKMax + 1] = {0};
-  memcpy(ssid, &EEPROM[0], kSSIDMax);
-  memcpy(psk, &EEPROM[kSSIDMax], kPSKMax);
+  char ssid[kWiFiSSIDMax + 1] = {0};
+  char psk[kWiFiPSKMax + 1] = {0};
+  memcpy(ssid, &EEPROM[0], kWiFiSSIDMax);
+  memcpy(psk, &EEPROM[kWiFiSSIDMax], kWiFiPSKMax);
   if (!ssid[0]) {
     Serial.println(F("No WiFi configuration found."));
     return false;
@@ -45,13 +43,9 @@ bool connectToWifi(
   return true;
 }
 
-bool configureWifi(EEPROMClass& EEPROM, HardwareSerial& Serial) {
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(500);
-  digitalWrite(LED_BUILTIN, HIGH);
-
-  char ssid[kSSIDMax] = {0};
-  char psk[kPSKMax] = {0};
+bool configureWiFi(EEPROMClass& EEPROM, HardwareSerial& Serial) {
+  char ssid[kWiFiSSIDMax] = {0};
+  char psk[kWiFiPSKMax] = {0};
 
   Serial.print(F("Enter WiFi SSID: "));
   Serial.setTimeout(10000);
@@ -60,7 +54,7 @@ bool configureWifi(EEPROMClass& EEPROM, HardwareSerial& Serial) {
   if (ssid_s.length() <= 1) {
     return false;
   }
-  if (ssid_s.length() - 1 > kSSIDMax) {
+  if (ssid_s.length() - 1 > kWiFiSSIDMax) {
     Serial.println(F("SSID is too long!"));
     return false;
   }
@@ -74,7 +68,7 @@ bool configureWifi(EEPROMClass& EEPROM, HardwareSerial& Serial) {
   if (psk_s.length() <= 1) {
     return false;
   }
-  if (psk_s.length() - 1 > kPSKMax) {
+  if (psk_s.length() - 1 > kWiFiPSKMax) {
     Serial.println(F("PSK is too long!"));
     return false;
   }
@@ -82,19 +76,6 @@ bool configureWifi(EEPROMClass& EEPROM, HardwareSerial& Serial) {
   memcpy(psk, psk_s.c_str(), psk_s.length() - 1);
 
   EEPROM.put(0, ssid);
-  EEPROM.put(kSSIDMax, psk);
+  EEPROM.put(kWiFiSSIDMax, psk);
   return EEPROM.commit();
-}
-
-} // namespace
-
-void initEEPROMWiFi(
-    EEPROMClass& EEPROM, ESP8266WiFiClass& WiFi, HardwareSerial& Serial) {
-  EEPROM.begin(kConfigSize);
-  while (!connectToWifi(EEPROM, WiFi, Serial)) {
-    if (!configureWifi(EEPROM, Serial)) {
-      Serial.println(F("WiFi configuration failed!"));
-      delay(1000);
-    }
-  }
 }

@@ -65,7 +65,19 @@ void setup() {
   // Get the A/C state in sync with internal state.
   ac.send();
 
-  initEEPROMWiFi();
+  EEPROM.begin(kWiFiConfigSize);
+  // Block until WiFi is connected.
+  while (!connectToWiFi()) {
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+    digitalWrite(LED_BUILTIN, HIGH);
+    // Prompt for new configuration via serial.
+    if (!configureWiFi()) {
+      Serial.println(F("WiFi configuration failed!"));
+      delay(1000);
+    }
+  }
+
   initWebServer();
 }
 

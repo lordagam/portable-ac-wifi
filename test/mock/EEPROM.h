@@ -19,8 +19,9 @@ class FakeEEPROM {
   uint8_t& operator [](int address) {
     return fake_data.at(address);
   }
-  void put(int address, const char data[]) {
-    memcpy(&(*this)[address], data, sizeof(data));
+  template <typename T>
+  void put(int address, const T& data) {
+    memcpy(&(*this)[address], &data, sizeof(data));
   }
 
   MOCK_METHOD0(commit, bool());
