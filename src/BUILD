@@ -1,20 +1,22 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
   name = "ac-settings-encoder",
   testonly = True,
   srcs = ["ac-settings-encoder.cpp"],
   hdrs = ["ac-settings-encoder.h"],
   deps = [
-    "//src/testing:fake-Arduino",
+    "//test/mock:Arduino",
   ],
 )
-
-cc_test(
-  name = "ac-settings-encoder-test",
-  srcs = ["ac-settings-encoder-test.cpp"],
+cc_library(
+  name = "eeprom-wifi",
+  testonly = True,
+  srcs = ["eeprom-wifi.cpp"],
+  hdrs = ["eeprom-wifi.h"],
   deps = [
-    ":ac-settings-encoder",
-    "@gmock-global//:gmock-global",
-    "@gtest//:gtest",
-    "@gtest//:gtest_main",
+    "//test/mock:Arduino",
+    "//test/mock:EEPROM",
+    "//test/mock:ESP8266WiFi",
   ],
 )

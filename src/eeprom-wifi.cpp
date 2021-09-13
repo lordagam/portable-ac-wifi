@@ -12,7 +12,8 @@ constexpr int kConfigSize = (kSSIDMax + kPSKMax);
 
 constexpr unsigned long kConnectTimeoutMs = 30000;
 
-bool connectToWifi() {
+bool connectToWifi(
+    EEPROMClass& EEPROM, ESP8266WiFiClass& WiFi, HardwareSerial& Serial) {
   char ssid[kSSIDMax + 1] = {0};
   char psk[kPSKMax + 1] = {0};
   memcpy(ssid, &EEPROM[0], kSSIDMax);
@@ -44,7 +45,7 @@ bool connectToWifi() {
   return true;
 }
 
-bool configureWifi() {
+bool configureWifi(EEPROMClass& EEPROM, HardwareSerial& Serial) {
   digitalWrite(LED_BUILTIN, LOW);
   delay(500);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -87,10 +88,11 @@ bool configureWifi() {
 
 } // namespace
 
-void initEEPROMWiFi() {
+void initEEPROMWiFi(
+    EEPROMClass& EEPROM, ESP8266WiFiClass& WiFi, HardwareSerial& Serial) {
   EEPROM.begin(kConfigSize);
-  while (!connectToWifi()) {
-    if (!configureWifi()) {
+  while (!connectToWifi(EEPROM, WiFi, Serial)) {
+    if (!configureWifi(EEPROM, Serial)) {
       Serial.println(F("WiFi configuration failed!"));
       delay(1000);
     }
