@@ -2,9 +2,12 @@
 #define __TESTING_ARDUINO_H
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "gmock/gmock.h"
 
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 #define bit(x) (1 << (x))
 #define F(str) str
 #define LED_BUILTIN 99
@@ -28,6 +31,12 @@ class FakeString {
   }
   const char* c_str() {
     return c_str_;
+  }
+  bool equals(const char* str) {
+    return !strcmp(c_str_, str);
+  }
+  int toInt() {
+    return atoi(c_str_);
   }
 
  private:

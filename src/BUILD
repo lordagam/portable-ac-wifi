@@ -20,3 +20,13 @@ cc_library(
     "//test/mock:ESP8266WiFi",
   ],
 )
+cc_library(
+  name = "settings-handler",
+  testonly = True,
+  srcs = ["settings-handler.cpp"],
+  hdrs = ["settings-handler.h"],
+  deps = [
+    ":ac-settings-encoder",
+    "//test/mock:ESP8266WebServer",
+  ],
+)

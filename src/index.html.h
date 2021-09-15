@@ -1,4 +1,3 @@
-constexpr int kHTTPOK = 200;
 constexpr char kIndexContentType[] = "text/html";
 constexpr PROGMEM char kIndexHtml[] = R"html(
 <!Doctype html>

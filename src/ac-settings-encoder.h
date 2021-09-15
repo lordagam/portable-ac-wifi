@@ -17,6 +17,7 @@ class ACSettingsEncoder {
   };
 
   ACSettingsEncoder(uint8_t ir_output_pin, uint8_t ir_output_inactive);
+  virtual ~ACSettingsEncoder() {}
 
   FanSpeed getFanSpeed();
   void setFanSpeed(FanSpeed speed);
@@ -36,7 +37,7 @@ class ACSettingsEncoder {
   void setThermostatInF(uint8_t degrees_f) { thermostat = degrees_f; }
 
   // Transmit current settings via infrared signal.
-  void send();
+  virtual void send();
 
  private:
   // Arduino PWM output pin for generating infrared signal.

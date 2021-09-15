@@ -1,7 +1,6 @@
 #include "settings-handler.h"
 
 #include <string>
-
 #include <ESP8266WebServer.h>
 
 #include "ac-settings-encoder.h"
@@ -107,5 +106,5 @@ void handleSettings(
             ac.isTimerOn() ? kTrueString : kFalseString,
             ac.isPowerOn() ? kTrueString : kFalseString,
             ac.getThermostatInF());
-  server.send(200, kJsonContentType, json);
+  server.send(kHTTPOK, kJsonContentType, json);
 }
