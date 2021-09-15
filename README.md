@@ -12,3 +12,4 @@ Provides a service over WiFi to control a portable A/C unit by simulating IR rem
 
 # Related Links
 * [ESP8266 Arduino core](https://github.com/esp8266/Arduino)
+* [Adafruit MCP9808 library](https://github.com/adafruit/Adafruit_MCP9808_Library)
