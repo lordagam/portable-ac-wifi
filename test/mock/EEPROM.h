@@ -1,5 +1,5 @@
-#ifndef __TESTING_EEPROM_H
-#define __TESTING_EEPROM_H
+#ifndef __TEST_MOCK_EEPROM_H
+#define __TEST_MOCK_EEPROM_H
 
 #include <stdint.h>
 #include <string.h>

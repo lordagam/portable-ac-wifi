@@ -1,5 +1,5 @@
-#ifndef __TESTING_ESP8266WEBSERVER_H
-#define __TESTING_ESP8266WEBSERVER_H
+#ifndef __TEST_MOCK_ESP8266WEBSERVER_H
+#define __TEST_MOCK_ESP8266WEBSERVER_H
 
 #include "Arduino.h"
 #include "gmock/gmock.h"

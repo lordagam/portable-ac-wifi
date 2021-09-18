@@ -1,5 +1,5 @@
-#ifndef __TESTING_ESP8266WIFI_H
-#define __TESTING_ESP8266WIFI_H
+#ifndef __TEST_MOCK_ESP8266WIFI_H
+#define __TEST_MOCK_ESP8266WIFI_H
 
 #include "gmock/gmock.h"
 
