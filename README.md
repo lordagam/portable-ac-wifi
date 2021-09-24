@@ -7,7 +7,7 @@ Provides a service over WiFi to control a portable A/C unit by simulating IR rem
 * MCP9808 temperature sensor
 
 # Environment
-* Arduino IDE for build/upload
+* Arduino IDE for target device build/upload
 * Bazel for running unit tests
 
 # Related Links

@@ -1,8 +1,8 @@
 #include <Adafruit_MCP9808.h>
 #include <ESP8266WebServer.h>
+#include <eeprom-wifi.h>
 
 #include "src/ac-settings-encoder.h"
-#include "src/eeprom-wifi.h"
 #include "src/index.html.h"
 #include "src/settings-handler.h"
 

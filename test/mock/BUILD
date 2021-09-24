@@ -19,30 +19,12 @@ cc_library(
   ],
 )
 cc_library(
-  name = "EEPROM",
-  testonly = True,
-  hdrs = ["//test/mock:EEPROM.h"],
-  strip_include_prefix = "",
-  deps = [
-    "@gtest//:gtest",
-  ],
-)
-cc_library(
   name = "ESP8266WebServer",
   testonly = True,
   hdrs = ["//test/mock:ESP8266WebServer.h"],
   strip_include_prefix = "",
   deps = [
     ":Arduino",
-    "@gtest//:gtest",
-  ],
-)
-cc_library(
-  name = "ESP8266WiFi",
-  testonly = True,
-  hdrs = ["//test/mock:ESP8266WiFi.h"],
-  strip_include_prefix = "",
-  deps = [
     "@gtest//:gtest",
   ],
 )
