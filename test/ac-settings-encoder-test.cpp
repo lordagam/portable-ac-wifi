@@ -9,7 +9,8 @@
 
 MOCK_GLOBAL_FUNC2(analogWrite, void(int, int));
 MOCK_GLOBAL_FUNC2(digitalWrite, void(int, int));
-MOCK_GLOBAL_FUNC1(delayMicroseconds, void(uint64_t));
+MOCK_GLOBAL_FUNC1(delayMicroseconds, void(uint32_t));
+MOCK_GLOBAL_FUNC0(micros, uint32_t());
 
 namespace {
 
@@ -32,8 +33,13 @@ class ACSettingsEncoderTest : public testing::Test {
   void registerMocksAndSend() {
     EXPECT_GLOBAL_CALL(delayMicroseconds, delayMicroseconds(_))
         .Times(AnyNumber())
-        .WillRepeatedly(Invoke([&](uint64_t us) {
+        .WillRepeatedly(Invoke([&](uint32_t us) {
           clock_us_ += us;
+        }));
+    EXPECT_GLOBAL_CALL(micros, micros())
+        .Times(AnyNumber())
+        .WillRepeatedly(Invoke([&]() {
+          return clock_us_;
         }));
     EXPECT_GLOBAL_CALL(analogWrite, analogWrite(kTestPin, _))
         .Times(AnyNumber())
@@ -55,21 +61,21 @@ class ACSettingsEncoderTest : public testing::Test {
     encoder.send();
   }
 
-  std::vector<uint64_t> getDurations(int n) {
+  std::vector<uint32_t> getDurations(int n) {
     EXPECT_GE(durations_us.size(), n);
-    std::vector<uint64_t> result(
+    std::vector<uint32_t> result(
         durations_us.begin(), durations_us.begin() + n);
     durations_us.erase(durations_us.begin(), durations_us.begin() + n);
     return result;
   }
 
   ACSettingsEncoder encoder;
-  std::vector<uint64_t> durations_us;
+  std::vector<uint32_t> durations_us;
 
  private:
-  uint64_t clock_us_;
+  uint32_t clock_us_;
   int pin_value_;
-  uint64_t last_edge_us_;
+  uint32_t last_edge_us_;
 };
 
 TEST_F(ACSettingsEncoderTest, DefaultSettings) {
@@ -118,8 +124,8 @@ TEST_F(ACSettingsEncoderTest, SendsHeader) {
   EXPECT_THAT(
       getDurations(22),
       ElementsAre(
-          0, 9050, 4450, 535, 535, 535, 535, 535, 535, 535, 1650, 535, 535, 535,
-          535, 535, 1650, 535, 535, 535, 535, 535));
+          0, 9100, 4500, 585, 585, 585, 585, 585, 585, 585, 1700, 585, 585, 585,
+          585, 585, 1700, 585, 585, 585, 585, 585));
 }
 
 TEST_F(ACSettingsEncoderTest, SendsDefaultValues) {
@@ -131,20 +137,20 @@ TEST_F(ACSettingsEncoderTest, SendsDefaultValues) {
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          535, 535, 535, 535, 1650, 535, 1650, 535, 535, 535, 535, 535, 535,
-          535, 535, 535));
+          585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
+          585, 585, 585));
   // Power/degrees/timer/power
   EXPECT_THAT(
       getDurations(14),
       ElementsAre(
-          1650, 535, 535, 535, 535, 535, 1650, 535, 1650, 535, 535, 535, 535,
-          535));
+          1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
+          585));
   // Thermostat
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          535, 535, 1650, 535, 1650, 535, 535, 535, 535, 535, 535, 535, 1650,
-          535, 535, 535));
+          585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
+          585, 585, 585));
   EXPECT_THAT(durations_us, IsEmpty());
 }
 
@@ -158,20 +164,20 @@ TEST_F(ACSettingsEncoderTest, SendsWithThermostatZero) {
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          535, 535, 535, 535, 1650, 535, 1650, 535, 535, 535, 535, 535, 535,
-          535, 535, 535));
+          585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
+          585, 585, 585));
   // Power/degrees/timer/power
   EXPECT_THAT(
       getDurations(14),
       ElementsAre(
-          1650, 535, 535, 535, 535, 535, 1650, 535, 1650, 535, 535, 535, 535,
-          535));
+          1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
+          585));
   // Thermostat
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          535, 535, 535, 535, 535, 535, 535, 535, 535, 535, 535, 535, 535, 535,
-          535, 535));
+          585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585,
+          585, 585));
   EXPECT_THAT(durations_us, IsEmpty());
 }
 
@@ -185,20 +191,20 @@ TEST_F(ACSettingsEncoderTest, SendsWithPowerOn) {
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          535, 535, 535, 535, 1650, 535, 1650, 535, 535, 535, 535, 535, 535,
-          535, 535, 535));
+          585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
+          585, 585, 585));
   // Power/degrees/timer/power
   EXPECT_THAT(
       getDurations(14),
       ElementsAre(
-          535, 535, 535, 535, 1650, 535, 535, 535, 1650, 535, 535, 535, 1650,
-          535));
+          585, 585, 585, 585, 1700, 585, 585, 585, 1700, 585, 585, 585, 1700,
+          585));
   // Thermostat
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          535, 535, 1650, 535, 1650, 535, 535, 535, 535, 535, 535, 535, 1650,
-          535, 535, 535));
+          585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
+          585, 585, 585));
   EXPECT_THAT(durations_us, IsEmpty());
 }
 
@@ -212,20 +218,20 @@ TEST_F(ACSettingsEncoderTest, SendsWithFanLow) {
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          1650, 535, 535, 535, 535, 535, 1650, 535, 535, 535, 535, 535, 535,
-          535, 535, 535));
+          1700, 585, 585, 585, 585, 585, 1700, 585, 585, 585, 585, 585, 585,
+          585, 585, 585));
   // Power/degrees/timer/power
   EXPECT_THAT(
       getDurations(14),
       ElementsAre(
-          1650, 535, 535, 535, 535, 535, 1650, 535, 1650, 535, 535, 535, 535,
-          535));
+          1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
+          585));
   // Thermostat
   EXPECT_THAT(
       getDurations(16),
       ElementsAre(
-          535, 535, 1650, 535, 1650, 535, 535, 535, 535, 535, 535, 535, 1650,
-          535, 535, 535));
+          585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
+          585, 585, 585));
   EXPECT_THAT(durations_us, IsEmpty());
 }
 

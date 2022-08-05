@@ -9,7 +9,6 @@ constexpr int kPWMOff = 0;
 
 constexpr int kSignalLow_us = 585;
 constexpr int kSignalHigh_us = 1700;
-constexpr int kSignalAdjust_us = 50;
 
 constexpr uint8_t kFanLow = bit(0);
 constexpr uint8_t kFanMedium = bit(1);
@@ -87,8 +86,23 @@ void ACSettingsEncoder::setMode(ACSettingsEncoder::Mode mode) {
   }
 }
 
+void delayMicrosSinceLast(unsigned long us) {
+  static unsigned long target_us = 0;
+  unsigned long now_us = micros();
+  if (!us) {
+    target_us = now_us;
+  } else {
+    target_us += us;
+  }
+  if (target_us > now_us) {
+    delayMicroseconds(target_us - now_us);
+  }
+}
+
 void ACSettingsEncoder::send() {
+  noInterrupts();
   bool signal_active = true;
+  delayMicrosSinceLast(0);
   for (int i = 0; i < sizeof(kHeaderSequence_us) / sizeof(int); i++) {
     if (signal_active) {
       analogWrite(ir_output_pin, kPWMUniform);
@@ -97,7 +111,7 @@ void ACSettingsEncoder::send() {
       digitalWrite(ir_output_pin, ir_output_inactive);
     }
     signal_active = !signal_active;
-    delayMicroseconds(kHeaderSequence_us[i] - kSignalAdjust_us);
+    delayMicrosSinceLast(kHeaderSequence_us[i]);
   }
   sendByte(fan_mode_flags);
   if (power_on) {
@@ -118,18 +132,19 @@ void ACSettingsEncoder::send() {
   sendByte(thermostat);
   analogWrite(ir_output_pin, kPWMOff);
   digitalWrite(ir_output_pin, ir_output_inactive);
+  interrupts();
 }
 
 void ACSettingsEncoder::sendBit(bool b) {
   analogWrite(ir_output_pin, kPWMOff);
   digitalWrite(ir_output_pin, ir_output_inactive);
   if (b) {
-    delayMicroseconds(kSignalHigh_us - kSignalAdjust_us);
+    delayMicrosSinceLast(kSignalHigh_us);
   } else {
-    delayMicroseconds(kSignalLow_us - kSignalAdjust_us);
+    delayMicrosSinceLast(kSignalLow_us);
   }
   analogWrite(ir_output_pin, kPWMUniform);
-  delayMicroseconds(kSignalLow_us - kSignalAdjust_us);
+  delayMicrosSinceLast(kSignalLow_us);
 }
 
 void ACSettingsEncoder::sendByte(uint8_t b) {

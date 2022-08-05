@@ -17,9 +17,13 @@
 void analogWrite(int pin, int val);
 void digitalWrite(int pin, int val);
 
-void delayMicroseconds(uint64_t us);
-void delay(uint64_t ms);
-uint64_t millis();
+static void noInterrupts() {}
+static void interrupts() {}
+
+void delayMicroseconds(uint32_t us);
+void delay(uint32_t ms);
+uint32_t micros();
+uint32_t millis();
 
 class FakeString {
  public:

@@ -18,6 +18,7 @@ constexpr char kTrueString[] = "true";
 constexpr char kFalseString[] = "false";
 constexpr int kThermostatMinF = 50;
 constexpr int kThermostatMaxF = 100;
+constexpr unsigned long kRepeatSendDelayMs = 100;
 
 const char* modeToString(ACSettingsEncoder::Mode mode) {
   switch (mode) {
@@ -80,6 +81,9 @@ void handleSettingsUpdate(ESP8266WebServer& server, ACSettingsEncoder& ac) {
   thermostatInF = min(thermostatInF, kThermostatMaxF);
   thermostatInF = max(thermostatInF, kThermostatMinF);
   ac.setThermostatInF(thermostatInF);
+  // Send twice to improve reliability
+  ac.send();
+  delay(kRepeatSendDelayMs);
   ac.send();
 }
 

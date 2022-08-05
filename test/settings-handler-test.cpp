@@ -11,7 +11,9 @@
 // Only necessary due to dependency on ACSettingsEncoder.
 MOCK_GLOBAL_FUNC2(analogWrite, void(int, int));
 MOCK_GLOBAL_FUNC2(digitalWrite, void(int, int));
-MOCK_GLOBAL_FUNC1(delayMicroseconds, void(uint64_t));
+MOCK_GLOBAL_FUNC1(delay, void(uint32_t));
+MOCK_GLOBAL_FUNC1(delayMicroseconds, void(uint32_t));
+MOCK_GLOBAL_FUNC0(micros, uint32_t());
 
 namespace {
 
@@ -60,7 +62,8 @@ TEST(HandleSettingsTest, UpdatesSettingsAndCallsSend) {
   EXPECT_CALL(server, arg(StrEq("thermostatInF")))
     .WillOnce(Return(String("55")));
 
-  EXPECT_CALL(encoder, send());
+  EXPECT_GLOBAL_CALL(delay, delay(_));
+  EXPECT_CALL(encoder, send()).Times(2);
   EXPECT_CALL(
     server,
     send(200, StrEq("application/json"),
