@@ -10,6 +10,7 @@
 MOCK_GLOBAL_FUNC2(analogWrite, void(int, int));
 MOCK_GLOBAL_FUNC2(digitalWrite, void(int, int));
 MOCK_GLOBAL_FUNC1(delayMicroseconds, void(uint32_t));
+MOCK_GLOBAL_FUNC1(delay, void(uint32_t));
 MOCK_GLOBAL_FUNC0(micros, uint32_t());
 
 namespace {
@@ -36,6 +37,8 @@ class ACSettingsEncoderTest : public testing::Test {
         .WillRepeatedly(Invoke([&](uint32_t us) {
           clock_us_ += us;
         }));
+    EXPECT_GLOBAL_CALL(delay, delay(_))
+        .Times(AnyNumber());
     EXPECT_GLOBAL_CALL(micros, micros())
         .Times(AnyNumber())
         .WillRepeatedly(Invoke([&]() {
@@ -131,26 +134,28 @@ TEST_F(ACSettingsEncoderTest, SendsHeader) {
 TEST_F(ACSettingsEncoderTest, SendsDefaultValues) {
   registerMocksAndSend();
 
-  // Skip header
-  getDurations(22);
-  // Fan/mode flags
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
-          585, 585, 585));
-  // Power/degrees/timer/power
-  EXPECT_THAT(
-      getDurations(14),
-      ElementsAre(
-          1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
-          585));
-  // Thermostat
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
-          585, 585, 585));
+  for (int i = 0; i < 2; i++) {
+    // Skip header
+    getDurations(22);
+    // Fan/mode flags
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
+            585, 585, 585));
+    // Power/degrees/timer/power
+    EXPECT_THAT(
+        getDurations(14),
+        ElementsAre(
+            1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
+            585));
+    // Thermostat
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
+            585, 585, 585));
+  }
   EXPECT_THAT(durations_us, IsEmpty());
 }
 
@@ -158,26 +163,28 @@ TEST_F(ACSettingsEncoderTest, SendsWithThermostatZero) {
   encoder.setThermostatInF(0);
   registerMocksAndSend();
 
-  // Skip header
-  getDurations(22);
-  // Fan/mode flags
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
-          585, 585, 585));
-  // Power/degrees/timer/power
-  EXPECT_THAT(
-      getDurations(14),
-      ElementsAre(
-          1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
-          585));
-  // Thermostat
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585,
-          585, 585));
+  for (int i = 0; i < 2; i++) {
+    // Skip header
+    getDurations(22);
+    // Fan/mode flags
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
+            585, 585, 585));
+    // Power/degrees/timer/power
+    EXPECT_THAT(
+        getDurations(14),
+        ElementsAre(
+            1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
+            585));
+    // Thermostat
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585, 585,
+            585, 585));
+  }
   EXPECT_THAT(durations_us, IsEmpty());
 }
 
@@ -185,26 +192,28 @@ TEST_F(ACSettingsEncoderTest, SendsWithPowerOn) {
   encoder.powerOn();
   registerMocksAndSend();
 
-  // Skip header
-  getDurations(22);
-  // Fan/mode flags
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
-          585, 585, 585));
-  // Power/degrees/timer/power
-  EXPECT_THAT(
-      getDurations(14),
-      ElementsAre(
-          585, 585, 585, 585, 1700, 585, 585, 585, 1700, 585, 585, 585, 1700,
-          585));
-  // Thermostat
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
-          585, 585, 585));
+  for (int i = 0; i < 2; i++) {
+    // Skip header
+    getDurations(22);
+    // Fan/mode flags
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585,
+            585, 585, 585));
+    // Power/degrees/timer/power
+    EXPECT_THAT(
+        getDurations(14),
+        ElementsAre(
+            585, 585, 585, 585, 1700, 585, 585, 585, 1700, 585, 585, 585, 1700,
+            585));
+    // Thermostat
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
+            585, 585, 585));
+  }
   EXPECT_THAT(durations_us, IsEmpty());
 }
 
@@ -212,26 +221,28 @@ TEST_F(ACSettingsEncoderTest, SendsWithFanLow) {
   encoder.setFanSpeed(ACSettingsEncoder::kLow);
   registerMocksAndSend();
 
-  // Skip header
-  getDurations(22);
-  // Fan/mode flags
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          1700, 585, 585, 585, 585, 585, 1700, 585, 585, 585, 585, 585, 585,
-          585, 585, 585));
-  // Power/degrees/timer/power
-  EXPECT_THAT(
-      getDurations(14),
-      ElementsAre(
-          1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
-          585));
-  // Thermostat
-  EXPECT_THAT(
-      getDurations(16),
-      ElementsAre(
-          585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
-          585, 585, 585));
+  for (int i = 0; i < 2; i++) {
+    // Skip header
+    getDurations(22);
+    // Fan/mode flags
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            1700, 585, 585, 585, 585, 585, 1700, 585, 585, 585, 585, 585, 585,
+            585, 585, 585));
+    // Power/degrees/timer/power
+    EXPECT_THAT(
+        getDurations(14),
+        ElementsAre(
+            1700, 585, 585, 585, 585, 585, 1700, 585, 1700, 585, 585, 585, 585,
+            585));
+    // Thermostat
+    EXPECT_THAT(
+        getDurations(16),
+        ElementsAre(
+            585, 585, 1700, 585, 1700, 585, 585, 585, 585, 585, 585, 585, 1700,
+            585, 585, 585));
+  }
   EXPECT_THAT(durations_us, IsEmpty());
 }
 

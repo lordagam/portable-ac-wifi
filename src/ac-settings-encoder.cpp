@@ -4,6 +4,8 @@
 
 namespace {
 
+constexpr unsigned long kRepeatSendDelayMs = 100;
+
 constexpr int kPWMUniform = 128;
 constexpr int kPWMOff = 0;
 
@@ -100,6 +102,13 @@ void delayMicrosSinceLast(unsigned long us) {
 }
 
 void ACSettingsEncoder::send() {
+  // Send twice to improve reliability
+  sendOnce();
+  delay(kRepeatSendDelayMs);
+  sendOnce();
+}
+
+void ACSettingsEncoder::sendOnce() {
   noInterrupts();
   bool signal_active = true;
   delayMicrosSinceLast(0);

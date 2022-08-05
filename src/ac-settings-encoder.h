@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+constexpr int kThermostatMinF = 60;
+constexpr int kThermostatMaxF = 89;
+
 class ACSettingsEncoder {
  public:
   enum FanSpeed {
@@ -53,6 +56,7 @@ class ACSettingsEncoder {
   // Target temperature in degrees Fahrenheit.
   uint8_t thermostat = 70;
 
+  void sendOnce();
   void sendBit(bool b);
   void sendByte(uint8_t b);
 };

@@ -42,6 +42,9 @@ class FakeString {
   int toInt() {
     return atoi(c_str_);
   }
+  float toFloat() {
+    return atof(c_str_);
+  }
 
  private:
   const char* c_str_;

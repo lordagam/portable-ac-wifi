@@ -16,6 +16,17 @@ cc_library(
   hdrs = ["settings-handler.h"],
   deps = [
     ":ac-settings-encoder",
+    ":target-cooling",
     "//test/mock:ESP8266WebServer",
+  ],
+)
+cc_library(
+  name = "target-cooling",
+  testonly = True,
+  srcs = ["target-cooling.cpp"],
+  hdrs = ["target-cooling.h"],
+  deps = [
+    ":ac-settings-encoder",
+    "//test/mock:Arduino",
   ],
 )

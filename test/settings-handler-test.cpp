@@ -62,8 +62,7 @@ TEST(HandleSettingsTest, UpdatesSettingsAndCallsSend) {
   EXPECT_CALL(server, arg(StrEq("thermostatInF")))
     .WillOnce(Return(String("55")));
 
-  EXPECT_GLOBAL_CALL(delay, delay(_));
-  EXPECT_CALL(encoder, send()).Times(2);
+  EXPECT_CALL(encoder, send());
   EXPECT_CALL(
     server,
     send(200, StrEq("application/json"),

@@ -4,6 +4,7 @@
 #include <ESP8266WebServer.h>
 
 #include "ac-settings-encoder.h"
+#include "target-cooling.h"
 
 namespace {
 
@@ -16,9 +17,6 @@ constexpr char kMediumString[] = "medium";
 constexpr char kHighString[] = "high";
 constexpr char kTrueString[] = "true";
 constexpr char kFalseString[] = "false";
-constexpr int kThermostatMinF = 50;
-constexpr int kThermostatMaxF = 100;
-constexpr unsigned long kRepeatSendDelayMs = 100;
 
 const char* modeToString(ACSettingsEncoder::Mode mode) {
   switch (mode) {
@@ -81,10 +79,14 @@ void handleSettingsUpdate(ESP8266WebServer& server, ACSettingsEncoder& ac) {
   thermostatInF = min(thermostatInF, kThermostatMaxF);
   thermostatInF = max(thermostatInF, kThermostatMinF);
   ac.setThermostatInF(thermostatInF);
-  // Send twice to improve reliability
   ac.send();
-  delay(kRepeatSendDelayMs);
-  ac.send();
+}
+
+void handleTargetCoolingUpdate(ESP8266WebServer& server, TargetCooling& tc) {
+  float thermostatInF = server.arg("thermostatInF").toFloat();
+  tc.setThermostatInF(thermostatInF);
+  bool isEnabled = server.arg("enabled").equals(kTrueString);
+  tc.setEnabled(isEnabled);
 }
 
 } // namespace
@@ -110,5 +112,23 @@ void handleSettings(
             ac.isTimerOn() ? kTrueString : kFalseString,
             ac.isPowerOn() ? kTrueString : kFalseString,
             ac.getThermostatInF());
+  server.send(kHTTPOK, kJsonContentType, json);
+}
+
+void handleTargetCooling(
+  ESP8266WebServer& server, TargetCooling& tc, float ambient_temp_f) {
+  if (server.method() == HTTP_POST) {
+    handleTargetCoolingUpdate(server, tc);
+  }
+  char json[128];
+  snprintf(json, sizeof(json),
+            "{"
+            R"("ambient":"%f",)"
+            R"("enabled":%s,)"
+            R"("thermostatInF":"%f")"
+            "}",
+            ambient_temp_f,
+            tc.isEnabled() ? kTrueString : kFalseString,
+            tc.getThermostatInF());
   server.send(kHTTPOK, kJsonContentType, json);
 }

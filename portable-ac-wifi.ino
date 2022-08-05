@@ -5,6 +5,7 @@
 #include "src/ac-settings-encoder.h"
 #include "src/index.html.h"
 #include "src/settings-handler.h"
+#include "src/target-cooling.h"
 
 // Default MCP9808 breakout address, no address pins connected.
 #define TEMP_SENSOR_I2C_ADDR 0x18
@@ -16,8 +17,12 @@
 #define SERVER_HTTP_PORT 80
 #define SERIAL_BAUD 115200
 
+// Averages 100 samples at 6 seconds apart = 10 min
+constexpr unsigned long kTargetCoolingInterval = 6000;
+
 Adafruit_MCP9808 temp_sensor;
 ACSettingsEncoder ac(IR_OUTPUT_PIN, IR_OUTPUT_INACTIVE);
+TargetCooling targetCooling(ac);
 ESP8266WebServer server(SERVER_HTTP_PORT);
 
 float sampleTempF() {
@@ -33,8 +38,13 @@ void handleSettingsCallback() {
   handleSettings(server, ac, sampleTempF());
 }
 
+void handleTargetCoolingCallback() {
+  handleTargetCooling(server, targetCooling, sampleTempF());
+}
+
 void initWebServer() {
   server.on("/settings", handleSettingsCallback);
+  server.on("/targetCooling", handleTargetCoolingCallback);
   server.on("/", []() {
     server.send(kHTTPOK, kIndexContentType, FPSTR(kIndexHtml));
   });
@@ -83,4 +93,11 @@ void setup() {
 
 void loop() {
   server.handleClient();
+
+  static unsigned long last_ms = 0;
+  unsigned long now_ms = millis();
+  if (now_ms - last_ms >= kTargetCoolingInterval) {
+    last_ms = now_ms;
+    targetCooling.process(sampleTempF());
+  }
 }
