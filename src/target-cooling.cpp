@@ -11,23 +11,28 @@ constexpr float kToleranceInF = 1.0;
 } // namespace
 
 void TargetCooling::process(float ambient_temp_f) {
-  if (!is_enabled) {
-    return;
-  }
-
   float average_f = averageAmbientInF(ambient_temp_f);
-  bool is_cooling = ac.getThermostatInF() == kThermostatMinF;
-
   bool updated = false;
-  if (average_f > thermostat_f + kToleranceInF && !is_cooling) {
-    ac.setMode(ACSettingsEncoder::Mode::kCool);
-    ac.powerOn();
-    ac.setThermostatInF(kThermostatMinF);
+
+  if (ac.isPowerOn() != is_enabled) {
+    if (is_enabled) {
+      ac.powerOn();
+    } else {
+      ac.powerOff();
+    }
     updated = true;
   }
-  if (average_f < thermostat_f - kToleranceInF && is_cooling) {
-    ac.setThermostatInF(kThermostatMaxF);
-    updated = true;
+
+  if (is_enabled) {
+    bool is_cooling = ac.getThermostatInF() == kThermostatMinF;
+    if (average_f > thermostat_f + kToleranceInF && !is_cooling) {
+      ac.setThermostatInF(kThermostatMinF);
+      updated = true;
+    }
+    if (average_f < thermostat_f - kToleranceInF && is_cooling) {
+      ac.setThermostatInF(kThermostatMaxF);
+      updated = true;
+    }
   }
 
   if (updated) {
